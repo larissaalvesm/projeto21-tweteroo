@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/user.dto';
 import { CreateTweetDto } from './dtos/tweet.dto';
@@ -40,5 +40,37 @@ export class AppService {
         tweet: tweet.tweet
       };
     });
+  }
+
+  getTweets(page:number | null){
+    if(page && page < 1){
+      throw new BadRequestException('Informe uma página válida!', { cause: new Error(), description: 'Informe uma página válida!' });
+    }
+
+    const reversedTweets = this.tweets.reverse().map((tweet) => {
+      return {
+        username: tweet.user.username,
+        avatar: tweet.user.avatar,
+        tweet: tweet.tweet
+      };
+    });
+
+    if(!page && reversedTweets.length <= 15){
+      return reversedTweets;
+    } 
+    if (!page && reversedTweets.length > 15) {
+      return reversedTweets.slice(0,15);
+    } 
+    if(page && page >= 1){
+      const min = 15 * (page -1);
+      const max = (15 * page) -1 ;
+      const tweets = [];
+
+      for (let i = min; i <= max && i < reversedTweets.length; i++) {
+        tweets.push(reversedTweets[i]);
+      }
+      
+      return tweets;
+    }
   }
 }

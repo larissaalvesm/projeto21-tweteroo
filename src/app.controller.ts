@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/user.dto';
 import { CreateTweetDto } from './dtos/tweet.dto';
@@ -27,5 +27,10 @@ export class AppController {
   @Get("tweets/:username")
   getTweetsByUsername(@Param("username") username: string) {
     return this.appService.getTweetsByUsername(username);
+  }
+
+  @Get("tweets")
+  getTweets(@Query("page") page: number | null) {
+    return this.appService.getTweets(page);
   }
 }
