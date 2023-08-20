@@ -13,12 +13,6 @@ export class AppService {
   private users: User[] = []; 
   private tweets: Tweet[] = []; 
 
-
-  constructor() {
-    this.users = [];
-    this.tweets = [];
-  }
-
   createUser(body: CreateUserDto) {
     const user = new User(body.username, body.avatar);
     return this.users.push(user);
@@ -31,5 +25,20 @@ export class AppService {
     }
     const tweet = new Tweet(user, body.tweet);
     return this.tweets.push(tweet);
+  }
+
+  getTweetsByUsername(username: string){
+    const userTweets = this.tweets.filter((tweet) => tweet.user.username === username);
+    if(userTweets.length === 0){
+      return [];
+    }
+
+    return userTweets.map((tweet) => {
+      return {
+        username: tweet.user.username,
+        avatar: tweet.user.avatar,
+        tweet: tweet.tweet
+      };
+    });
   }
 }
